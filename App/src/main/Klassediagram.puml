@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+class FrontEnd{
+ + void showBatteryLevel()
+ + void showNfcTags()
+}
+class User {
+ - String Name
+ - int userId
+}
+class permitions{
+ - User userId
+
+ + boolean checkPermission()
+ + void grantPermission()
+}
+class Locks{
+ - int batteryLevel
+ - int lockId
+ - NfcTaggs taggId
+ - int lockStatus
+
+ + NfcTaggs swapTagg()
+}
+class NfcTaggs {
+ - int taggId
+ - Locks lockId
+
+ + Locks swapLock()
+}
+class BluetoothActivity{
+ + void connectToBluetooth()
+}
+class NfcActivity {
+ + void readNfcTag()
+}
+@enduml
