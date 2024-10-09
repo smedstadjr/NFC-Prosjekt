@@ -1,78 +1,65 @@
 package com.example.nfcapplicationlocks;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.*;
 
 public class BluetoothService {
-
     private static final String TAG = "BluetoothService";
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private final BluetoothSocket mSocket;
+    private final InputStream mInStream;
+    private final OutputStream mOutStream;
+    private final Handler mHandler;
 
-    private BluetoothAdapter bluetoothAdapter;
-    private BluetoothSocket bluetoothSocket;
-    private InputStream inputStream;
-    private OutputStream outputStream;
+    public BluetoothService(BluetoothSocket socket, Handler handler) {
+        mSocket = socket;
+        InputStream tmpIn = null;
+        OutputStream tmpOut = null;
+        mHandler = handler;
 
-    public BluetoothService(Context context) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        try {
+            tmpIn = mSocket.getInputStream();
+            tmpOut = mSocket.getOutputStream();
+        } catch (IOException e) {
+            Log.e(TAG, "Error occurred when creating input and output streams", e);
+        }
+
+        mInStream = tmpIn;
+        mOutStream = tmpOut;
     }
 
-    // Metode for å koble til en Bluetooth-enhet ved hjelp av dens adresse
-    public boolean connectToDevice(String deviceAddress) {
-        BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
-        try {
-            // Opprett en RFCOMM BluetoothSocket
-            bluetoothSocket = device.createRfcommSocketToServiceRecord(MY_UUID);
-            // Koble til enheten
-            bluetoothSocket.connect();
-            // Hent input- og output-strømmer for kommunikasjon
-            inputStream = bluetoothSocket.getInputStream();
-            outputStream = bluetoothSocket.getOutputStream();
-            return true;
-        } catch (IOException e) {
-            Log.e(TAG, "Error connecting to device", e);
-            return false;
+    public void read() {
+        byte[] buffer = new byte[1024]; 
+        int bytes;
+
+        while (true) {
+            try {
+                bytes = mInStream.read(buffer);
+                mHandler.obtainMessage(1, bytes, -1, buffer).sendToTarget();
+            } catch (IOException e) {
+                Log.e(TAG, "Input stream was disconnected", e);
+                break;
+            }
         }
     }
 
-    // Metode for å lese data fra Bluetooth-enheten
-    public String readData() {
+    public void write(byte[] bytes) {
         try {
-            byte[] buffer = new byte[1024]; // Buffer for å lagre innkommende data
-            int bytes = inputStream.read(buffer); // Les data fra input-strømmen
-            return new String(buffer, 0, bytes); // Konverter byte-array til String
+            mOutStream.write(bytes);
         } catch (IOException e) {
-            Log.e(TAG, "Error reading data", e);
-            return null;
+            Log.e(TAG, "Error occurred when sending data", e);
         }
     }
 
-    // Metode for å sende data til Bluetooth-enheten
-    public boolean sendData(String data) {
-        try {
-            outputStream.write(data.getBytes()); // Skriv data til output-strømmen
-            return true;
-        } catch (IOException e) {
-            Log.e(TAG, "Error sending data", e);
-            return false;
-        }
-    }
-
-    // Metode for å lukke Bluetooth-tilkoblingen
     public void closeConnection() {
         try {
-            if (inputStream != null) inputStream.close(); // Lukk input-strømmen
-            if (outputStream != null) outputStream.close(); // Lukk output-strømmen
-            if (bluetoothSocket != null) bluetoothSocket.close(); // Lukk BluetoothSocket
+            mSocket.close();
+            Log.d(TAG, "closeConnection: Socket closed");
         } catch (IOException e) {
-            Log.e(TAG, "Error closing connection", e);
+            Log.e(TAG, "closeConnection: Could not close socket", e);
         }
     }
 }
