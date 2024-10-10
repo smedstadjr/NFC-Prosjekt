@@ -13,6 +13,9 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.Map;
+import java.util.HashMap;
+import android.os.Handler;
 
 public class BluetoothPairing {
     private static final String TAG = "BluetoothPairing";
@@ -24,31 +27,38 @@ public class BluetoothPairing {
     private BluetoothSocket mSocket;
     private Context mContext;
 
+
     public BluetoothPairing(Context context) {
         mContext = context;
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        //creating a broadcastrecevier to listen for bond state changes
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         mContext.registerReceiver(mBroadcastReceiver, filter);
     }
 
+    //setting up the broadcastrecevier to log intents.
     private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
             if (BluetoothDevice.ACTION_BOND_STATE_CHANGED.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                //checks if the app has permission to use bluetooth
                 if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     Log.e(TAG, "BroadcastReceiver: Permission not granted");
                     return;
                 }
+                //checks if a bond has been established
                 if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDED.");
                     mDevice = device;
                     connect();
                 }
+                //checks if a bond is being established
                 if (device.getBondState() == BluetoothDevice.BOND_BONDING) {
                     Log.d(TAG, "BroadcastReceiver: BOND_BONDING.");
                 }
+                //checks if there is noe bonding
                 if (device.getBondState() == BluetoothDevice.BOND_NONE) {
                     Log.d(TAG, "BroadcastReceiver: BOND_NONE.");
                 }
@@ -56,6 +66,10 @@ public class BluetoothPairing {
         }
     };
 
+    /*
+    checks bluetooth permissions and starts pairing if permission is granted
+    also logging if permission not granted and if pairing is starting with a given unit
+     */
     public void startPairing(BluetoothDevice device) {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "startPairing: Permission not granted");
@@ -66,6 +80,10 @@ public class BluetoothPairing {
         mDevice.createBond();
     }
 
+    /*
+    again checking bluetooth permissions and logging if permission not granted.
+    creating RFComm socket for connecting
+     */
     private void connect() {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "connect: Permission not granted");
@@ -80,11 +98,18 @@ public class BluetoothPairing {
         }
         mSocket = tmp;
 
+        // disabling descovery mode, helps with memory usage
         mBluetoothAdapter.cancelDiscovery();
 
+
+        //making the connection and logging all results.
         try {
             mSocket.connect();
             Log.d(TAG, "connect: Connected to " + mDevice.getName());
+            Map<Integer, Locks> locksMap = new HashMap<>(); // Create or pass an existing locksMap
+            Handler handler = new Handler(); // Create or pass an existing Handler
+            BluetoothService bluetoothService = new BluetoothService(mSocket, handler, locksMap);
+            bluetoothService.read();
         } catch (IOException e) {
             try {
                 mSocket.close();
@@ -95,6 +120,7 @@ public class BluetoothPairing {
         }
     }
 
+    //closing the socket connection
     public void closeConnection() {
         try {
             mSocket.close();
