@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 
 public class BluetoothService {
     private static final String TAG = "BluetoothService";
@@ -13,12 +14,18 @@ public class BluetoothService {
     private final InputStream mInStream;
     private final OutputStream mOutStream;
     private final Handler mHandler;
+    private Map<Integer, Locks> locksMap;
 
-    public BluetoothService(BluetoothSocket socket, Handler handler) {
+    /*
+    setting up socket, input stream, output stream and handler
+    and sending to logg what happens if an error occur
+    */
+    public BluetoothService(BluetoothSocket socket, Handler handler, Map<Integer, Locks> locksMap) {
         mSocket = socket;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
         mHandler = handler;
+        this.locksMap = locksMap;
 
         try {
             tmpIn = mSocket.getInputStream();
@@ -31,8 +38,12 @@ public class BluetoothService {
         mOutStream = tmpOut;
     }
 
+    /*
+    reading information collected from the bluetooth connection
+    sending status to log if reading failed
+    */
     public void read() {
-        byte[] buffer = new byte[1024]; 
+        byte[] buffer = new byte[1024];
         int bytes;
 
         while (true) {
@@ -45,7 +56,35 @@ public class BluetoothService {
             }
         }
     }
+    private int parseLockId(byte[] buffer) {
+        // Implement parsing logic here
+        return 0; // Placeholder
+    }
 
+    private int parseBatteryLevel(byte[] buffer) {
+        // Implement parsing logic here
+        return 0; // Placeholder
+    }
+
+    private int parseLockStatus(byte[] buffer) {
+        // Implement parsing logic here
+        return 0; // Placeholder
+    }
+    private void updateOrCreateLock(int lockId, int batteryLevel, int lockStatus) {
+        Locks lock = locksMap.get(lockId);
+        if (lock == null) {
+            lock = new Locks();
+            lock.setLockId(lockId);
+            locksMap.put(lockId, lock);
+        }
+        lock.setBatteryLevel(batteryLevel);
+        lock.setLockStatus(lockStatus);
+    }
+
+    /*
+    sending information over bluetooth to connected unit
+    sending status to log if writing to unit failed
+     */
     public void write(byte[] bytes) {
         try {
             mOutStream.write(bytes);
@@ -54,6 +93,11 @@ public class BluetoothService {
         }
     }
 
+    /*
+    closing the bluetooth information transfer
+    and sending a message to log when done or
+    sending status to log if closing failed
+     */
     public void closeConnection() {
         try {
             mSocket.close();
