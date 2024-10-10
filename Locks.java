@@ -12,6 +12,7 @@ public class Locks {
         this.lockStatus = lockStatus;
         this.nfcTagg = nfcTagg;
     }
+    public Locks(){}
 
     public int getBatteryLevel() {
         return batteryLevel;
