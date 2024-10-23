@@ -21,6 +21,7 @@ public class BluetoothPairing {
     private static final String TAG = "BluetoothPairing";
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    private static final String RASPBERRY_PI_MAC_ADDRESS = "B8:27:EB:D5:9F:76"; // MAC-adress for Raspberry Pi
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
@@ -34,6 +35,7 @@ public class BluetoothPairing {
         //creating a broadcastrecevier to listen for bond state changes
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
         mContext.registerReceiver(mBroadcastReceiver, filter);
+        autoConnectToRaspberryPi(); // connect to prototype on startup
     }
 
     //setting up the broadcastrecevier to log intents.
@@ -65,6 +67,19 @@ public class BluetoothPairing {
             }
         }
     };
+    private void autoConnectToRaspberryPi() {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "autoConnectToRaspberryPi: Permission not granted");
+            return;
+        }
+        mDevice = mBluetoothAdapter.getRemoteDevice(RASPBERRY_PI_MAC_ADDRESS);
+        if (mDevice != null) {
+            Log.d(TAG, "autoConnectToRaspberryPi: Found device " + mDevice.getName());
+            startPairing(mDevice);
+        } else {
+            Log.e(TAG, "autoConnectToRaspberryPi: Device not found");
+        }
+    }
 
     /*
     checks bluetooth permissions and starts pairing if permission is granted
