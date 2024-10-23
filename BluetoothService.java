@@ -49,6 +49,11 @@ public class BluetoothService {
         while (true) {
             try {
                 bytes = mInStream.read(buffer);
+                //while reading information using parse methods as parameters for the updateOrCreate method
+                int lockId = parseLockId(buffer);
+                int batteryLevel = parseBatteryLevel(buffer);
+                int lockStatus = parseLockStatus(buffer);
+                updateOrCreateLock(lockId, batteryLevel, lockStatus);
                 mHandler.obtainMessage(1, bytes, -1, buffer).sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Input stream was disconnected", e);
@@ -57,19 +62,21 @@ public class BluetoothService {
         }
     }
     private int parseLockId(byte[] buffer) {
-        // Implement parsing logic here
-        return 0; // Placeholder
+        // Assuming lockId is stored in the first 4 bytes of the buffer
+        return ((buffer[0] & 0xFF) << 24) | ((buffer[1] & 0xFF) << 16) | ((buffer[2] & 0xFF) << 8) | (buffer[3] & 0xFF);
     }
 
     private int parseBatteryLevel(byte[] buffer) {
-        // Implement parsing logic here
-        return 0; // Placeholder
+        // Assuming batteryLevel is stored in the next 4 bytes (bytes 4 to 7)
+        return ((buffer[4] & 0xFF) << 24) | ((buffer[5] & 0xFF) << 16) | ((buffer[6] & 0xFF) << 8) | (buffer[7] & 0xFF);
     }
 
     private int parseLockStatus(byte[] buffer) {
-        // Implement parsing logic here
-        return 0; // Placeholder
+        // Assuming lockStatus is stored in the next 4 bytes (bytes 8 to 11)
+        return ((buffer[8] & 0xFF) << 24) | ((buffer[9] & 0xFF) << 16) | ((buffer[10] & 0xFF) << 8) | (buffer[11] & 0xFF);
     }
+
+    //takes three values as parameter to create or update a existing lock based on locksMap
     private void updateOrCreateLock(int lockId, int batteryLevel, int lockStatus) {
         Locks lock = locksMap.get(lockId);
         if (lock == null) {
