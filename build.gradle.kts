@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.constraintlayout)
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
+    testImplementation(libs.robolectric)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 
