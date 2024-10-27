@@ -5,6 +5,8 @@ import static org.mockito.Mockito.*;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import java.io.InputStream;
+import java.io.OutputStream;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
@@ -48,7 +50,14 @@ public class BluetoothPairingTest {
         when(mockContext.getApplicationContext()).thenReturn(mockContext);
         when(mockBluetoothAdapter.getRemoteDevice(anyString())).thenReturn(mockDevice);
         when(mockDevice.createRfcommSocketToServiceRecord(any(UUID.class))).thenReturn(mockSocket);
+
+        InputStream mockInputStream = mock(InputStream.class);
+        OutputStream mockOutputStream = mock(OutputStream.class);
+        when(mockSocket.getInputStream()).thenReturn(mockInputStream);
+        when(mockSocket.getOutputStream()).thenReturn(mockOutputStream);
+
         bluetoothPairing = new BluetoothPairing(mockContext);
+        bluetoothPairing.setSocketForTesting(mockSocket);
     }
 
     @Test
@@ -60,8 +69,8 @@ public class BluetoothPairingTest {
         method.setAccessible(true);
         method.invoke(bluetoothPairing);
 
-        verify(mockBluetoothAdapter).getRemoteDevice(anyString());
-        verify(mockDevice).createBond();
+        verify(mockBluetoothAdapter, times(2)).getRemoteDevice(anyString());
+        verify(mockDevice, times(2)).createBond();
     }
 
     @Test
@@ -94,4 +103,5 @@ public class BluetoothPairingTest {
 
         verify(mockSocket).close();
     }
+
 }
