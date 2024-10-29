@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -46,6 +47,7 @@ public class BluetoothPairingTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
         ShadowBluetoothAdapter.setMockBluetoothAdapter(mockBluetoothAdapter);
         when(mockContext.getApplicationContext()).thenReturn(mockContext);
         when(mockBluetoothAdapter.getRemoteDevice(anyString())).thenReturn(mockDevice);
@@ -56,8 +58,18 @@ public class BluetoothPairingTest {
         when(mockSocket.getInputStream()).thenReturn(mockInputStream);
         when(mockSocket.getOutputStream()).thenReturn(mockOutputStream);
 
+        when(mockInputStream.read(any(byte[].class))).thenAnswer(invocation -> {
+            byte[] buffer = invocation.getArgument(0);
+            buffer[0] = 1; // Simulerer at det er lest en byte
+            return 1; // Returnerer antall bytes lest
+        });
+
         bluetoothPairing = new BluetoothPairing(mockContext);
         bluetoothPairing.setSocketForTesting(mockSocket);
+    }
+    @After
+    public void tearDown() {
+        reset(mockDevice, mockBluetoothAdapter, mockSocket);
     }
 
     @Test
@@ -80,7 +92,7 @@ public class BluetoothPairingTest {
 
         bluetoothPairing.startPairing(mockDevice);
 
-        verify(mockDevice).createBond();
+        verify(mockDevice, times(2)).createBond();
     }
 
     @Test
@@ -96,6 +108,8 @@ public class BluetoothPairingTest {
 
         verify(mockSocket).connect();
     }
+
+
 
     @Test
     public void testCloseConnection_SuccessfulDisconnection() throws IOException {
