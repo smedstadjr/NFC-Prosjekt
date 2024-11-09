@@ -18,6 +18,7 @@ public class BluetoothPairing {
     private static final String TAG = "BluetoothPairing";
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    private static final String RASPBERRY_PI_MAC_ADDRESS = "B8:27:EB:D5:9F:76"; // MAC-adress for Raspberry Pi
 
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDevice mDevice;
@@ -56,6 +57,23 @@ public class BluetoothPairing {
         }
     };
 
+    public BluetoothSocket autoConnectToRaspberryPi() {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "autoConnectToRaspberryPi: Permission not granted");
+            return null;
+        }
+        mDevice = mBluetoothAdapter.getRemoteDevice(RASPBERRY_PI_MAC_ADDRESS);
+        if (mDevice != null) {
+            Log.d(TAG, "autoConnectToRaspberryPi: Found device " + mDevice.getName());
+            startPairing(mDevice);
+            // Kall connect() etter paring
+            mSocket = connect();
+        } else {
+            Log.e(TAG, "autoConnectToRaspberryPi: Device not found");
+        }
+        return mSocket;
+    }
+
     public void startPairing(BluetoothDevice device) {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "startPairing: Permission not granted");
@@ -66,15 +84,16 @@ public class BluetoothPairing {
         mDevice.createBond();
     }
 
-    private void connect() {
+    protected BluetoothSocket connect() {
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.e(TAG, "connect: Permission not granted");
-            return;
+            return null;
         }
         Log.d(TAG, "connect: Connecting to " + mDevice.getName());
         BluetoothSocket tmp = null;
         try {
             tmp = mDevice.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
+            Log.d(TAG, "connect: RFComm socket created");
         } catch (IOException e) {
             Log.e(TAG, "connect: Could not create RFComm socket", e);
         }
@@ -92,15 +111,21 @@ public class BluetoothPairing {
                 Log.e(TAG, "connect: Unable to close socket", e1);
             }
             Log.e(TAG, "connect: Could not connect to device", e);
+            return null;
         }
+        return mSocket;
     }
 
     public void closeConnection() {
-        try {
-            mSocket.close();
-            Log.d(TAG, "closeConnection: Socket closed");
-        } catch (IOException e) {
-            Log.e(TAG, "closeConnection: Could not close socket", e);
+        if (mSocket != null) {
+            try {
+                mSocket.close();
+                Log.d(TAG, "closeConnection: Socket closed");
+            } catch (IOException e) {
+                Log.e(TAG, "closeConnection: Could not close socket", e);
+            }
+        } else {
+            Log.e(TAG, "closeConnection: mSocket is null, cannot close connection");
         }
     }
 }
