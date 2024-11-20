@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SPLITTER_PROPORTION" value="0.42980188" />
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b64c20e2-f4ca-4b67-b869-7030cf99ac2c" name="Changes" comment="restrukturering rundt dependencies og forsøk på bluetooth kommunikasjon.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2mt09SLb1f7RYjhb3O89JiMmFvv" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Develop&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-f644763e9732-f98dd351" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task id="LOCAL−00001" summary="restrukturering av klassediagrammet">
+      <option name="closed" value="true" />
+      <created>1727880337090</created>
+      <option name="number" value="LOCAL−00001" />
+      <option name="presentableId" value="LOCAL−00001" />
+      <updated>1727880337090</updated>
+    </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b64c20e2-f4ca-4b67-b869-7030cf99ac2c" name="Changes" comment="restrukturering av klassediagrammet" />
+      <created>1727880416027</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727880416027</updated>
+      <workItem from="1727880419553" duration="4360000" />
+      <workItem from="1728202750632" duration="1147000" />
+      <workItem from="1728204058287" duration="2595000" />
+      <workItem from="1728403929633" duration="515000" />
+    </task>
+    <task id="LOCAL−00002" summary="lager noen av klassene til appen">
+      <option name="closed" value="true" />
+      <created>1727880609732</created>
+      <option name="number" value="LOCAL−00002" />
+      <option name="presentableId" value="LOCAL−00002" />
+      <updated>1727880609732</updated>
+    </task>
+    <task id="LOCAL−00003" summary="lager noen av klassene til appen">
+      <option name="closed" value="true" />
+      <created>1727881907404</created>
+      <option name="number" value="LOCAL−00003" />
+      <option name="presentableId" value="LOCAL−00003" />
+      <updated>1727881907404</updated>
+    </task>
+    <task id="LOCAL−00004" summary="Getter/Setter og Konstruktør">
+      <option name="closed" value="true" />
+      <created>1727882420192</created>
+      <option name="number" value="LOCAL−00004" />
+      <option name="presentableId" value="LOCAL−00004" />
+      <updated>1727882420192</updated>
+    </task>
+    <task id="LOCAL−00005" summary="dependencies for junit/testing">
+      <option name="closed" value="true" />
+      <created>1728119783625</created>
+      <option name="number" value="LOCAL−00005" />
+      <option name="presentableId" value="LOCAL−00005" />
+      <updated>1728119783625</updated>
+    </task>
+    <task id="LOCAL−00006" summary="clean-up">
+      <option name="closed" value="true" />
+      <created>1728119870867</created>
+      <option name="number" value="LOCAL−00006" />
+      <option name="presentableId" value="LOCAL−00006" />
+      <updated>1728119870867</updated>
+    </task>
+    <task id="LOCAL−00007" summary="restrukturering rundt dependencies og forsøk på bluetooth kommunikasjon.">
+      <option name="closed" value="true" />
+      <created>1728205180009</created>
+      <option name="number" value="LOCAL−00007" />
+      <option name="presentableId" value="LOCAL−00007" />
+      <updated>1728205180009</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="restrukturering av klassediagrammet" />
+    <MESSAGE value="lager noen av klassene til appen" />
+    <MESSAGE value="Getter/Setter og Konstruktør" />
+    <MESSAGE value="dependencies for junit/testing" />
+    <MESSAGE value="clean-up" />
+    <MESSAGE value="restrukturering rundt dependencies og forsøk på bluetooth kommunikasjon." />
+    <option name="LAST_COMMIT_MESSAGE" value="restrukturering rundt dependencies og forsøk på bluetooth kommunikasjon." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
