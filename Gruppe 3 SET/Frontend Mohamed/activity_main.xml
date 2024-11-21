@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Tidlig Dato (historie) - Grå og grønn slått sammen -->
+    <ImageButton
+        android:id="@+id/tidlig_dato"
+        android:layout_width="75dp"
+        android:layout_height="87dp"
+        app:srcCompat="@android:drawable/ic_menu_my_calendar"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/design_default_color_on_primary"
+        android:tint="@color/design_default_color_error" />
+
+    <!-- Setting - Grå og blå slått sammen -->
+    <ImageButton
+        android:id="@+id/setting"
+        android:layout_width="80dp"
+        android:layout_height="90dp"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="@color/design_default_color_background"
+        android:tint="@color/design_default_color_primary" />
+
+    <!-- Legg til - Grønn -->
+    <ImageButton
+        android:id="@+id/legg_till"
+        android:layout_width="136dp"
+        android:layout_height="62dp"
+        app:srcCompat="@android:drawable/ic_menu_add"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/black" />
+
+    <!-- Sjekk Strøm - Grønn -->
+    <ImageButton
+        android:id="@+id/sjekk_strøm"
+        android:layout_width="123dp"
+        android:layout_height="74dp"
+        app:srcCompat="@android:drawable/ic_lock_idle_low_battery"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@android:color/holo_green_light" />
+
+    <!-- Skann-knappen i midten - Sterk blå -->
+    <ImageButton
+        android:id="@+id/skann_knapp"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        app:srcCompat="@android:drawable/editbox_background_normal"
+        android:layout_centerInParent="true"
+        android:backgroundTint="@android:color/holo_blue_dark" />
+
+    <TextView
+        android:id="@+id/Tap.nest"
+        android:layout_width="78dp"
+        android:layout_height="27dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="253dp"
+        android:layout_marginEnd="172dp"
+        android:text="Tap.nest" />
+
+</RelativeLayout>
