@@ -2,6 +2,7 @@ Les dette!
 Vårt repository har gjennomgått en del rot opp gjennom arbeidet med prosjektet. Dette kommer blant annet av overgangen fra Java til Java i Android Studio, hvor noen tidligere commits har endt opp med å rote til strukturen i noen av våre branches. I tillegg til dette er det også klart å merge inn ganske mange filer feil til main og knyttet disse direkte til alle videre branches. Hvordan det har skjedd vet vi ikke, men det har skapt en del bloat som er forsøkt rettet opp i. Nå er main ryddig igjen, mens resten av strukturen er fortsatt ganske rotete. 
 
 NFC_App er urelevant for ferdig kode. Denne ligger ved for å se hvordan vi startet prosjektet. Altså kode før Android studio oppsettet.
+I mappen "Gruppe 3 SET" finner dere alle filer inkludert rapporten for prosjektarbeidet.
 ----------------------------------
 
 Generelle "tips og regler"
