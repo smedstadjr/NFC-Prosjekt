@@ -13,8 +13,7 @@ import java.util.Map;
  * sent and received through the bluetooth connection.
  *
  * This class sets up a input and outputsream that is used to read and write
- * to the bluetooth connection.
- *
+ * to and from the bluetooth connection.
  *
  */
 
@@ -115,19 +114,4 @@ public class BluetoothService {
         return mHandler;
     }
 
-    /*
-    closing the bluetooth information transfer
-    and sending a message to log when done or
-    sending status to log if closing failed
-     */
-    /*
-    public void closeConnection() {
-        try {
-            mSocket.close();
-            Log.d(TAG, "closeConnection: Socket closed");
-        } catch (IOException e) {
-            Log.e(TAG, "closeConnection: Could not close socket", e);
-        }
-    }
-     */
 }
