@@ -1,0 +1,119 @@
+import RPi.GPIO as GPIO  # This library allows us to control the GPIO pins on the Raspberry Pi
+import time  # This library gives us access to time-related functions like sleep()
+from smartcard.System import readers  # This allows us to interact with connected NFC card readers
+from smartcard.util import toHexString  # This helps us convert the card's UID (Unique Identifier) to a readable format
+from smartcard.Exceptions import NoCardException, CardConnectionException  # These exceptions help us handle cases where no card is present or if there's an issue connecting to the card
+from bluetooth import *  # This library enables Bluetooth functionality, allowing communication with a mobile app
+
+# Set up GPIO warnings and mode
+GPIO.setwarnings(False)  # Disable GPIO warnings
+GPIO.setmode(GPIO.BOARD)  # Use the physical pin numbering system
+
+# Define GPIO pins for the servo and LEDs
+LOCK_PIN = 12  # Pin connected to the lock servo
+LED_LOCKED_PIN = 23  # Pin connected to the "locked" LED
+LED_UNLOCKED_PIN = 24  # Pin connected to the "unlocked" LED
+
+# Set up the GPIO pins as outputs
+GPIO.setup(LOCK_PIN, GPIO.OUT)
+GPIO.setup(LED_LOCKED_PIN, GPIO.OUT)
+GPIO.setup(LED_UNLOCKED_PIN, GPIO.OUT)
+
+# Set up PWM on the servo pin with 50Hz
+servo1 = GPIO.PWM(LOCK_PIN, 50)  # Create a PWM object to control the servo
+servo1.start(0)  # Start the PWM with an initial duty cycle of 0%
+
+# Initial state of the lock
+is_locked = True  # Tracks whether the lock is currently locked or unlocked
+
+def lock():
+    """Locks the door by moving the servo to the locked position and turning on the "locked" LED."""
+    global is_locked
+    GPIO.output(LED_LOCKED_PIN, GPIO.HIGH)  # Turn on the "locked" LED
+    GPIO.output(LED_UNLOCKED_PIN, GPIO.LOW)  # Turn off the "unlocked" LED
+    servo1.ChangeDutyCycle(12.5)  # Move the servo to the locked position
+    time.sleep(1)  # Wait for 1 second to allow the servo to move
+    servo1.ChangeDutyCycle(0)  # Stop the servo
+    is_locked = True
+    print("Locked")
+
+def unlock():
+    """Unlocks the door by moving the servo to the unlocked position and turning on the "unlocked" LED."""
+    global is_locked
+    GPIO.output(LED_LOCKED_PIN, GPIO.LOW)  # Turn off the "locked" LED
+    GPIO.output(LED_UNLOCKED_PIN, GPIO.HIGH)  # Turn on the "unlocked" LED
+    servo1.ChangeDutyCycle(2.5)  # Move the servo to the unlocked position
+    time.sleep(1)  # Wait for 1 second to allow the servo to move
+    servo1.ChangeDutyCycle(0)  # Stop the servo
+    is_locked = False
+    print("Unlocked")
+
+def bluetooth_server():
+    """Starts a Bluetooth server that listens for commands from the mobile app."""
+    server_sock = BluetoothSocket(RFCOMM)  # Create a Bluetooth socket
+    server_sock.bind(("", PORT_ANY))  # Bind the socket to any available port
+    server_sock.listen(1)  # Listen for incoming connections
+    port = server_sock.getsockname()[1]
+    print(f"Bluetooth server listening on RFCOMM channel {port}")
+    client_sock, client_info = server_sock.accept()  # Accept a client connection
+    print(f"Accepted connection from {client_info}")
+    try:
+        while True:
+            data = client_sock.recv(1024)  # Receive data from the client
+            if len(data) == 0:
+                break
+            print(f"Received data: {data}")
+            if len(data) == 12:
+                lockID = int(data[:4])
+                batteryLevel = int(data[4:8])
+                lockStatus = int(data[8:12])
+                print(f"lockID: {lockID}, batteryLevel: {batteryLevel}, lockStatus: {lockStatus}")
+                if lockStatus == 1:
+                    lock()
+                else:
+                    unlock()
+            else:
+                print(f"Received data is not 12 characters long: {data}")
+    except OSError as e:
+        print(f"OSError: {e}")
+    print("Disconnected")
+    client_sock.close()
+    server_sock.close()
+    print("All done")
+
+try:
+    import threading
+    bt_thread = threading.Thread(target=bluetooth_server)
+    bt_thread.daemon = True
+    bt_thread.start()  # Start the Bluetooth server in a separate thread
+
+    r = readers()
+    if len(r) == 0:
+        print("No NFC readers found")
+        exit()
+    reader = r[0]  # Get the first available NFC reader
+    print("Waiting for NFC card...")
+    while True:
+        try:
+            connection = reader.createConnection()
+            connection.connect()
+            data, sw1, sw2 = connection.transmit([0xFF, 0xCA, 0x00, 0x00, 0x00])
+            uid = toHexString(data)
+            if uid:
+                print(f"Found card with UID: {uid}")
+                if uid == "85 48 16 2D":
+                    if is_locked:
+                        unlock()
+                    else:
+                        lock()
+                time.sleep(0.5)
+        except NoCardException:
+            pass
+        except CardConnectionException:
+            pass
+        time.sleep(0.1)
+except KeyboardInterrupt:
+    print("Exiting...")
+finally:
+    servo1.stop()
+    GPIO.cleanup()
